@@ -53,6 +53,12 @@ class Tank(Hero):
         self.attBonus = int((att * self.level) / 4)
         self.heal = int((hp * self.level) /  50)
 
+
+
+
+def main():
+    pass
+
 def copyChar(char):
     return copy.copy(char)
 
@@ -75,7 +81,7 @@ def monsterDungeonAlgoritme(allMonster, level):
 # Heroes 
 hayabusa : Assasin = Assasin("Shin Hayabusa", 100, 10)
 cyclop : Mage = Mage("One Eyes Cyclops", 90, 7)
-jinwoo : Assasin = Assasin("Sung Jinwoo Shadow Monarch", 200, 10)
+jinwoo : Assasin = Assasin("Sung Jinwoo Shadow Monarch", 200, 10) # Ini Bakal jadi karakter OP
 somat : Tank = Tank("Pak Somat The Conqueror", 500, 5)
 
 # Monsters
@@ -92,6 +98,10 @@ pickMonster = [goblin, orc, spider, ant]
 monsterDungeon = monsterDungeonAlgoritme(pickMonster, levelDungeon)
 
 
+
+if __name__ == "__init__":
+    main()
+    
 
 # print("Welcome To the Jungle \nYou Should Slains Every Monster!!!\n")
 # while sum(monsterDungeon.values()) > 0:
