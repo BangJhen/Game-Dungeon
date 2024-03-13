@@ -19,7 +19,8 @@ class Char:
 
 class Monster(Char):
     def __init__(self, name, hp, att, prob) -> None:
-        super().__init__(name, hp, att, prob)
+        super().__init__(name, hp, att)
+        self.prob = prob
 
 class Hero(Char):
     def __init__(self, name, hp, att) -> None:
@@ -43,32 +44,52 @@ class Assasin(Hero):
 class Mage(Hero):
     def __init__(self, name, hp, att) -> None:
         super().__init__(name, hp, att)
-        self.attBonus = int((att * self.level) / 5)
+        self.attBonus = int((att * self.level) / 7)
         self.heal = int((hp * self.level) /  50)
 
+class Tank(Hero):
+    def __init__(self, name, hp, att) -> None:
+        super().__init__(name, hp, att)
+        self.attBonus = int((att * self.level) / 4)
+        self.heal = int((hp * self.level) /  50)
 
 def copyChar(char):
     return copy.copy(char)
 
-def monsterDungeon(allMonster, levelDungeon):
+# Algoritma untuk mengacak monster dalam dungeon
+def monsterDungeonAlgoritme(allMonster, level):
+    probs = {}
+    monsterDungeons = []
+    for monster in allMonster:
+        if monster.prob * level >= 10:
+            probs[monster] = 10 - (monster.prob * level)
+        else:
+            probs[monster] = monster.prob * level
+            
+    for prob in probs:
+        monsterDungeons.extend([prob for i in range(int(probs[prob]))])
 
-# Hero 
+    return [random.choice(monsterDungeons) for i in range(5 + (level // 3))]
+    
+            
+# Heroes 
 hayabusa : Assasin = Assasin("Shin Hayabusa", 100, 10)
 cyclop : Mage = Mage("One Eyes Cyclops", 90, 7)
+jinwoo : Assasin = Assasin("Sung Jinwoo Shadow Monarch", 200, 10)
+somat : Tank = Tank("Pak Somat The Conqueror", 500, 5)
 
-# Monster
-goblin : Monster = Monster("Little Goblin", 15, 2, 0.8)
-orc : Monster = Monster("Big Orc", 50, 10, 0.2)
-spider : Monster = Monster("Spider Six Arm", 35, 7, 0.2)
-ant : Monster = Monster("Ant Greek",20, 4, 0.5)
+# Monsters
+goblin : Monster = Monster("Little Goblin", 15, 2, 8)
+orc : Monster = Monster("Big Orc", 50, 10, 1)
+spider : Monster = Monster("Spider Six Arm", 35, 7, 2)
+ant : Monster = Monster("Ant Greek",20, 4, 5)
 
 levelDungeon = 1
 
-allMonster = [goblin, orc, spider, ant]
+pickMonster = [goblin, orc, spider, ant]
 
-monsterDungeon = [random.choice(allMonster).name for i in range(5)]
-print(monsterDungeon)
-
+# monsterDungeon = [random.choice(pickMonster).name for i in range(5)]
+monsterDungeon = monsterDungeonAlgoritme(pickMonster, levelDungeon)
 
 
 
