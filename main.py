@@ -2,12 +2,13 @@ import copy
 import random
 class Char:
 
-    def __init__(self, name, hp, att) -> None:
+    def __init__(self, name : str, hp : int, att : int) -> None:
         self.name = name
         self.hp = hp
         self.att = att
         
-    def attack(self, enemy, levelDung):
+    def attack(self, enemy, levelDung : int ) :
+        ''''Menyerang ke musuh'''
         print(f"{enemy.name} \n{enemy.hp}HP (-{self.att}Dmg) ===> {enemy.hp - self.att}HP")
         enemy.hp -= self.att
         
@@ -19,19 +20,19 @@ class Char:
 
 
 class Monster(Char):
-    def __init__(self, name, hp, att, prob) -> None:
+    def __init__(self, name : str, hp : int, att : int, prob : float) -> None:
         super().__init__(name, hp, att)
         self.prob = prob
 
 class Hero(Char):
-    def __init__(self, name, hp, att) -> None:
+    def __init__(self, name : str, hp : int, att : int) -> None:
         super().__init__(name, hp, att)
         self.level = 1
         self.combo = 0
         self.exp = 0
         self.preqExp = int((self.att * self.level) / 10)
 
-    def expUp(self, enemy, levelDung):
+    def expUp(self, enemy, levelDung : int):
         self.exp += int((enemy.att * levelDung) / 10)
         
         if (self.exp >= self.preqExp):
@@ -47,19 +48,19 @@ class Hero(Char):
     
     
 class Assasin(Hero):
-    def __init__(self, name, hp, att) -> None:
+    def __init__(self, name : str, hp : int, att : int) -> None:
         super().__init__(name, hp, att)
         self.attBonus = int((att * self.level) / 10)
         self.heal = int((hp * self.level) /  75)
 
 class Mage(Hero):
-    def __init__(self, name, hp, att) -> None:
+    def __init__(self, name : str, hp : int, att : int) -> None:
         super().__init__(name, hp, att)
         self.attBonus = int((att * self.level) / 7)
         self.heal = int((hp * self.level) /  50)
 
 class Tank(Hero):
-    def __init__(self, name, hp, att) -> None:
+    def __init__(self, name : str, hp : int, att : int) -> None:
         super().__init__(name, hp, att)
         self.attBonus = int((att * self.level) / 4)
         self.heal = int((hp * self.level) /  50)
@@ -67,12 +68,13 @@ class Tank(Hero):
 
 
 
-
 def copyChar(char):
+    ''''Fungsi untuk mengcopy agar tidak ada variabel yang berkaitan (Saling lepas)'''
     return copy.copy(char)
 
 # Algoritma untuk mengacak monster dalam dungeon
-def monsterDungeonAlgoritm(allMonster, level):
+def monsterDungeonAlgoritm(allMonster : list, level : int) -> list:
+    ''''Generate Monster Dungeon sesuai level'''
     probs = {}
     monsterDungeons = []
     for monster in allMonster:
