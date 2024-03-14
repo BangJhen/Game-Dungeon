@@ -8,8 +8,9 @@ class Char:
         self.att = att
         
     def attack(self, enemy, levelDung):
-        print(f"\n{enemy.name} \n{enemy.hp}HP (-{self.att}Dmg) ===> {enemy.hp - self.att}HP\n")
+        print(f"{enemy.name} \n{enemy.hp}HP (-{self.att}Dmg) ===> {enemy.hp - self.att}HP")
         enemy.hp -= self.att
+        
         if isinstance(self, Hero):
             if enemy.hp <= 0:
                 self.expUp(enemy= enemy, levelDung = levelDung)
@@ -28,10 +29,10 @@ class Hero(Char):
         self.level = 1
         self.combo = 0
         self.exp = 0
-        self.preqExp = (self.att * self.level) / 10
+        self.preqExp = int((self.att * self.level) / 10)
 
     def expUp(self, enemy, levelDung):
-        self.exp += (enemy.att * levelDung) / 10
+        self.exp += int((enemy.att * levelDung) / 10)
         
         if (self.exp >= self.preqExp):
             self.level += 1
@@ -39,10 +40,10 @@ class Hero(Char):
             self.hp += int(self.hp * self.level * 0.2)
             
             self.exp = 0
-            self.preqExp = (self.att * self.level) / 10
+            self.preqExp = int((self.att * self.level) / 10)
 
     def __str__(self) -> str:
-        return f"Hero {' ' *  2}: {self.name} ({self.level} Lvl {self.exp}/{self.preqExp}Exp) \nHealth : {self.hp} \nAttack : {self.att}"
+        return f"\nHero {' ' *  2}: {self.name} ({self.level} Lvl {self.exp:,}/{self.preqExp:,}Exp) \nHealth : {self.hp} \nAttack : {self.att}"
     
     
 class Assasin(Hero):
@@ -81,8 +82,8 @@ def monsterDungeonAlgoritm(allMonster, level):
             probs[monster] = monster.prob * level
             
     for prob in probs:
-        prob.hp += int(prob.hp * level * 0.01)
-        prob.att += int(prob.att * level * 0.1)
+        prob.hp += int(prob.hp * level * 0.1)
+        prob.att += int(prob.att * level * 0.25)
         monsterDungeons.extend([prob for i in range(int(probs[prob]))])
 
     return [copyChar(random.choice(monsterDungeons)) for i in range(1 + (level // 3))]
@@ -97,20 +98,25 @@ def main():
     
     print("Welcome To the Jungle \nYou Should Slains Every Monster!!!\n")
     while True:
-        print("There was a Monster")
+        print("\nThere was a Monster")
         for no ,monster in enumerate(monsterDungeon):
             print(f"{no + 1}. {monster.name} ({monster.hp}HP)")
         choice = int(input("Who you want to fight (Pick Number) : "))
+        print("\n")
         
         if (choice > 0 and choice <= len(monsterDungeon)):
             choice -= 1
             jinwoo.attack(monsterDungeon[choice], levelDungeon)
             if (monsterDungeon[choice].hp <= 0):
                 monsterDungeon.pop(choice)
-            
+            else:
+                monsterDungeon[choice].attack(jinwoo, levelDungeon)
+                            
             if (len(monsterDungeon) <= 0):
                 levelDungeon += 1
                 monsterDungeon = monsterDungeonAlgoritm(pickMonster, levelDungeon)
+            
+                
                             
         
             
