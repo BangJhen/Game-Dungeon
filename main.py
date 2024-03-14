@@ -9,14 +9,19 @@ class Char:
         
     def attack(self, enemy, levelDung : int ) :
         ''''Menyerang ke musuh'''
-        print(f"{enemy.name} \n{enemy.hp}HP (-{self.att}Dmg) ===> {enemy.hp - self.att}HP")
+        print(f"{enemy.name} \n{enemy.hp:,}HP (-{self.att:,}Dmg) ===> {(enemy.hp - self.att):,}HP")
         enemy.hp -= self.att
         
-        if isinstance(self, Hero):
+        if isinstance(self, Hero): # Win
             if enemy.hp <= 0:
                 self.expUp(enemy= enemy, levelDung = levelDung)
                 print(self)
             self.combo += 1
+        elif isinstance(self, Monster): # Lose
+            if enemy.hp <= 0:
+                return True
+               
+
 
 
 class Monster(Char):
@@ -30,21 +35,21 @@ class Hero(Char):
         self.level = 1
         self.combo = 0
         self.exp = 0
-        self.preqExp = int((self.att * self.level) / 10)
+        self.preqExp = (self.att * self.level) // 10
 
     def expUp(self, enemy, levelDung : int):
-        self.exp += int((enemy.att * levelDung) / 10)
+        self.exp += (enemy.att * levelDung) / 10
         
         if (self.exp >= self.preqExp):
             self.level += 1
-            self.att += int(self.att * self.level * 0.1)
+            self.att += int(self.att * self.level * 0.08)
             self.hp += int(self.hp * self.level * 0.2)
             
             self.exp = 0
-            self.preqExp = int((self.att * self.level) / 10)
+            self.preqExp = (self.att * self.level) // 10
 
     def __str__(self) -> str:
-        return f"\nHero {' ' *  2}: {self.name} ({self.level} Lvl {self.exp:,}/{self.preqExp:,}Exp) \nHealth : {self.hp} \nAttack : {self.att}"
+        return f"\nHero {' ' *  2}: {self.name} ({self.level} Level - {self.exp:,}/{self.preqExp:,}Exp) \nHealth : {self.hp:,} \nAttack : {self.att:,}"
     
     
 class Assasin(Hero):
@@ -66,11 +71,7 @@ class Tank(Hero):
         self.heal = int((hp * self.level) /  50)
 
 
-
-
-def copyChar(char):
-    ''''Fungsi untuk mengcopy agar tidak ada variabel yang berkaitan (Saling lepas)'''
-    return copy.copy(char)
+copyChar = lambda char : copy.copy(char)
 
 # Algoritma untuk mengacak monster dalam dungeon
 def monsterDungeonAlgoritm(allMonster : list, level : int) -> list:
@@ -82,10 +83,7 @@ def monsterDungeonAlgoritm(allMonster : list, level : int) -> list:
             probs[monster] = 10 - (monster.prob * level / 10)
         else:
             probs[monster] = monster.prob * level
-            
     for prob in probs:
-        prob.hp += int(prob.hp * level * 0.1)
-        prob.att += int(prob.att * level * 0.25)
         monsterDungeons.extend([prob for i in range(int(probs[prob]))])
 
     return [copyChar(random.choice(monsterDungeons)) for i in range(1 + (level // 3))]
@@ -98,11 +96,11 @@ def main():
     monsterDungeon = monsterDungeonAlgoritm(pickMonster, levelDungeon)    
     
     
-    print("Welcome To the Jungle \nYou Should Slains Every Monster!!!\n")
+    print("Welcome To the Jungle \nYou Should Slains Every Monster!!!")
     while True:
         print("\nThere was a Monster")
         for no ,monster in enumerate(monsterDungeon):
-            print(f"{no + 1}. {monster.name} ({monster.hp}HP)")
+            print(f"{no + 1}. {monster.name} ({monster.hp:,}HP) ({monster.att:,}Att)")
         choice = int(input("Who you want to fight (Pick Number) : "))
         print("\n")
         
@@ -112,28 +110,28 @@ def main():
             if (monsterDungeon[choice].hp <= 0):
                 monsterDungeon.pop(choice)
             else:
-                monsterDungeon[choice].attack(jinwoo, levelDungeon)
+                if (monsterDungeon[choice].attack(jinwoo, levelDungeon)):
+                    break
                             
             if (len(monsterDungeon) <= 0):
                 levelDungeon += 1
                 monsterDungeon = monsterDungeonAlgoritm(pickMonster, levelDungeon)
-            
-                
-                            
-        
-            
+                for monstDung in monsterDungeon:
+                    monstDung.att += int(monstDung.att * levelDungeon * random.random())
+                    monstDung.hp += int(monstDung.hp * levelDungeon * random.random())
+                    
             
 # Heroes 
-hayabusa : Assasin = Assasin("Shin Hayabusa", 1000, 10)
-cyclop : Mage = Mage("One Eyes Cyclops", 900, 7)
-jinwoo : Assasin = Assasin("Sung Jinwoo Shadow Monarch", 2000, 10) # Ini Bakal jadi karakter OP
-somat : Tank = Tank("Pak Somat The Conqueror", 1500, 5)
+hayabusa : Assasin = Assasin("Shin Hayabusa", 100, 10)
+cyclop : Mage = Mage("One Eyes Cyclops", 90, 7)
+jinwoo : Assasin = Assasin("Sung Jinwoo Shadow Monarch", 200, 10) # Ini Bakal jadi karakter OP
+somat : Tank = Tank("Pak Somat The Conqueror", 150, 5)
 
 # Monsters
-goblin : Monster = Monster("Little Goblin", 50, 5, 1)
-orc : Monster = Monster("Big Orc", 5000, 100, .1)
-spider : Monster = Monster("Spider Six Arm", 3500, 70, .1)
-ant : Monster = Monster("Ant Greek",120, 20, .4)
+goblin : Monster = Monster("Little Goblin", 20, 5, 1)
+orc : Monster = Monster("Big Orc", 500, 100, .05)
+spider : Monster = Monster("Spider Six Arm", 150, 70, .1)
+ant : Monster = Monster("Ant Greek",50, 10, .4)
 
 # monsterDungeon = [random.choice(pickMonster).name for i in range(5)]
 
