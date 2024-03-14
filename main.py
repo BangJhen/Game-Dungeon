@@ -18,8 +18,7 @@ class Char:
                 print(self)
             self.combo += 1
         elif isinstance(self, Monster): # Lose
-            if enemy.hp <= 0:
-                return True
+            if enemy.hp <= 0: return True
                
 
 
@@ -107,11 +106,11 @@ def main():
         if (choice > 0 and choice <= len(monsterDungeon)):
             choice -= 1
             jinwoo.attack(monsterDungeon[choice], levelDungeon)
-            if (monsterDungeon[choice].hp <= 0):
+            
+            if (monsterDungeon[choice].hp <= 0): 
                 monsterDungeon.pop(choice)
-            else:
-                if (monsterDungeon[choice].attack(jinwoo, levelDungeon)):
-                    break
+            else:   
+                if (monsterDungeon[choice].attack(jinwoo, levelDungeon)): break
                             
             if (len(monsterDungeon) <= 0):
                 levelDungeon += 1
