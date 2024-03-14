@@ -1,5 +1,4 @@
 import copy
-import math
 import random
 class Char:
 
@@ -8,12 +7,13 @@ class Char:
         self.hp = hp
         self.att = att
         
-    def attack(self, enemy):
+    def attack(self, enemy, levelDung):
         print(f"\n{enemy.name} \n{enemy.hp}HP (-{self.att}Dmg) ===> {enemy.hp - self.att}HP\n")
         enemy.hp -= self.att
         if isinstance(self, Hero):
             if enemy.hp <= 0:
-                self.upLevel()
+                self.expUp(enemy= enemy, levelDung = levelDung)
+                print(self)
             self.combo += 1
 
 
@@ -27,14 +27,24 @@ class Hero(Char):
         super().__init__(name, hp, att)
         self.level = 1
         self.combo = 0
+        self.exp = 0
+        self.preqExp = (self.att * self.level) / 10
 
-    def upLevel(self):
-        self.level += 1
-        self.att += self.att * self.level * 0.5
-        self.hp += self.hp * self.level * 0.75
+    def expUp(self, enemy, levelDung):
+        self.exp += (enemy.att * levelDung) / 10
+        
+        if (self.exp >= self.preqExp):
+            self.level += 1
+            self.att += int(self.att * self.level * 0.1)
+            self.hp += int(self.hp * self.level * 0.2)
+            
+            self.exp = 0
+            self.preqExp = (self.att * self.level) / 10
 
     def __str__(self) -> str:
-        return f"Hero {' ' *  2}: {self.name} ({self.level} Lvl) \nHealth : {self.hp} \nAttack : {self.att}"
+        return f"Hero {' ' *  2}: {self.name} ({self.level} Lvl {self.exp}/{self.preqExp}Exp) \nHealth : {self.hp} \nAttack : {self.att}"
+    
+    
 class Assasin(Hero):
     def __init__(self, name, hp, att) -> None:
         super().__init__(name, hp, att)
@@ -56,53 +66,70 @@ class Tank(Hero):
 
 
 
-def main():
-    pass
 
 def copyChar(char):
     return copy.copy(char)
 
 # Algoritma untuk mengacak monster dalam dungeon
-def monsterDungeonAlgoritme(allMonster, level):
+def monsterDungeonAlgoritm(allMonster, level):
     probs = {}
     monsterDungeons = []
     for monster in allMonster:
         if monster.prob * level >= 10:
-            probs[monster] = 10 - (monster.prob * level)
+            probs[monster] = 10 - (monster.prob * level / 10)
         else:
             probs[monster] = monster.prob * level
             
     for prob in probs:
+        prob.hp += int(prob.hp * level * 0.01)
+        prob.att += int(prob.att * level * 0.1)
         monsterDungeons.extend([prob for i in range(int(probs[prob]))])
 
-    return [random.choice(monsterDungeons) for i in range(5 + (level // 3))]
+    return [copyChar(random.choice(monsterDungeons)) for i in range(1 + (level // 3))]
     
+# Main code
+def main():
+    # Level and Monster Settings
+    pickMonster = [goblin, orc, spider, ant]
+    levelDungeon = 1
+    monsterDungeon = monsterDungeonAlgoritm(pickMonster, levelDungeon)    
+    
+    
+    print("Welcome To the Jungle \nYou Should Slains Every Monster!!!\n")
+    while True:
+        print("There was a Monster")
+        for no ,monster in enumerate(monsterDungeon):
+            print(f"{no + 1}. {monster.name} ({monster.hp}HP)")
+        choice = int(input("Who you want to fight (Pick Number) : "))
+        
+        if (choice > 0 and choice <= len(monsterDungeon)):
+            choice -= 1
+            jinwoo.attack(monsterDungeon[choice], levelDungeon)
+            if (monsterDungeon[choice].hp <= 0):
+                monsterDungeon.pop(choice)
+            
+            if (len(monsterDungeon) <= 0):
+                levelDungeon += 1
+                monsterDungeon = monsterDungeonAlgoritm(pickMonster, levelDungeon)
+                            
+        
+            
             
 # Heroes 
-hayabusa : Assasin = Assasin("Shin Hayabusa", 100, 10)
-cyclop : Mage = Mage("One Eyes Cyclops", 90, 7)
-jinwoo : Assasin = Assasin("Sung Jinwoo Shadow Monarch", 200, 10) # Ini Bakal jadi karakter OP
-somat : Tank = Tank("Pak Somat The Conqueror", 500, 5)
+hayabusa : Assasin = Assasin("Shin Hayabusa", 1000, 10)
+cyclop : Mage = Mage("One Eyes Cyclops", 900, 7)
+jinwoo : Assasin = Assasin("Sung Jinwoo Shadow Monarch", 2000, 10) # Ini Bakal jadi karakter OP
+somat : Tank = Tank("Pak Somat The Conqueror", 1500, 5)
 
 # Monsters
-goblin : Monster = Monster("Little Goblin", 15, 2, 8)
-orc : Monster = Monster("Big Orc", 50, 10, 1)
-spider : Monster = Monster("Spider Six Arm", 35, 7, 2)
-ant : Monster = Monster("Ant Greek",20, 4, 5)
-
-levelDungeon = 1
-
-pickMonster = [goblin, orc, spider, ant]
+goblin : Monster = Monster("Little Goblin", 50, 5, 1)
+orc : Monster = Monster("Big Orc", 5000, 100, .1)
+spider : Monster = Monster("Spider Six Arm", 3500, 70, .1)
+ant : Monster = Monster("Ant Greek",120, 20, .4)
 
 # monsterDungeon = [random.choice(pickMonster).name for i in range(5)]
-monsterDungeon = monsterDungeonAlgoritme(pickMonster, levelDungeon)
 
-
-
-if __name__ == "__init__":
+# Gameplay
+if __name__ == "__main__":
     main()
     
-
-# print("Welcome To the Jungle \nYou Should Slains Every Monster!!!\n")
-# while sum(monsterDungeon.values()) > 0:
-#     totalMonster = 0
