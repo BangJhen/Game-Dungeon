@@ -12,7 +12,6 @@ class Char:
         ''''Menyerang ke musuh'''
         print(f"{enemy.name} \n{enemy.hp:,}HP (-{self.att:,}Dmg) ===> {(enemy.hp - self.att):,}HP")
         enemy.hp -= self.att
-        print("Berhasil")
         
         if isinstance(self, Hero): # Win
             if enemy.hp <= 0:
