@@ -33,22 +33,22 @@ class Hero(Char):
         super().__init__(name, hp, att)
         self.level = 1
         self.combo = 0
-        self.exp = 0
-        self.preqExp = (self.att * self.level) // 10
+        self.__exp = 0
+        self.__preqExp = (self.att * self.level) // 10
 
     def expUp(self, enemy, levelDung : int):
-        self.exp += (enemy.att * levelDung) / 10
+        self.__exp += (enemy.att * levelDung) / 10
         
-        if (self.exp >= self.preqExp):
+        if (self.__exp >= self.__preqExp):
             self.level += 1
             self.att += int(self.att * self.level * 0.08)
             self.hp += int(self.hp * self.level * 0.2)
             
-            self.exp = 0
-            self.preqExp = (self.att * self.level) // 10
+            self.__exp = 0
+            self.__preqExp = (self.att * self.level) // 10
 
     def __str__(self) -> str:
-        return f"\nHero {' ' *  2}: {self.name} ({self.level} Level - {self.exp:,}/{self.preqExp:,}Exp) \nHealth : {self.hp:,} \nAttack : {self.att:,}"
+        return f"\nHero {' ' *  2}: {self.name} ({self.level} Level - {self.__exp:,}/{self.__preqExp:,}Exp) \nHealth : {self.hp:,} \nAttack : {self.att:,}"
     
     
 class Assasin(Hero):
